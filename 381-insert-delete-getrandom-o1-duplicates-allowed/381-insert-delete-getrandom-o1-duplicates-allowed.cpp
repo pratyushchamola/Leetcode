@@ -1,40 +1,40 @@
 class RandomizedCollection {
 public:
-    unordered_map<int,vector<int>> mp;
-    vector<pair<int,int>> arr;
+    map<int,set<int>> mp;
+    vector<int> ss;
+    
     RandomizedCollection() {
         
     }
     
     bool insert(int val) {
-        auto it = mp.find(val) == mp.end();
         
-        mp[val].push_back(arr.size());
-        arr.push_back(pair<int,int>(val,mp[val].size()-1));
+        mp[val].insert(ss.size());
+        ss.push_back(val);
         
-        return it;
+        return (mp[val].size() == 1);
     }
     
     bool remove(int val) {
-        auto it = mp.find(val) != mp.end();
-        
-        if(it){
-            auto last = arr.back();
-            mp[last.first][last.second] = mp[val].back();
-            arr[mp[val].back()] = last;
-            
-            mp[val].pop_back();
-            
-            if(mp[val].empty())mp.erase(val);
-            arr.pop_back();
-            
+         auto it = mp.find(val);                    
+        if(it != mp.end()){                          
+            auto pos = *it->second.begin();         
+            it->second.erase(it->second.begin());   
+            ss[pos] = ss.back();                      
+            mp[ss.back()].insert(pos);               
+            mp[ss.back()].erase(ss.size()-1);          
+        ss.pop_back();                            
+            if (it->second.size() == 0)             
+                mp.erase(it);                     
+            return true;
         }
-        
-        return it;
+        return false;
     }
     
     int getRandom() {
-        return arr[rand()%arr.size()].first;
+        int ind = 0;
+        if(ss.size()>0)return ss[rand()%ss.size()];
+        return ss[ind];
     }
 };
 
